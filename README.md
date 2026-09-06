@@ -2,7 +2,8 @@
 
 A modern, responsive and professionally designed beauty & cosmetics website built with React.js and Vite.
 
-Glow Beauty provides a clean and elegant online experience for showcasing skincare, makeup, hair care, fragrances and other beauty essentials. The website includes product browsing, product details, wishlist functionality, gallery, contact form, newsletter subscription and essential policy pages.
+🌐 **Live Website:** [Visit Glow Beauty]
+(https://client-business-website-alpha.vercel.app)
 
 ---
 

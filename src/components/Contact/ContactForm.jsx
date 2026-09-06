@@ -38,7 +38,6 @@ function ContactForm() {
  const handleSubmit = async (e) => {
   e.preventDefault();
 
-  
   if (
     !formData.name.trim() ||
     !formData.email.trim() ||
@@ -48,54 +47,59 @@ function ContactForm() {
     toast.error("Please fill all fields");
     return;
   }
-  
+
   const namePattern = /^[A-Za-z\s'-]{2,50}$/;
-  
+
   if (!namePattern.test(formData.name)) {
     toast.error("Please enter a valid name.");
     return;
   }
-const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-if (!emailPattern.test(formData.email)) {
-  toast.error("Please enter a valid email address.");
-  return;
-}
+  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-if (formData.subject.trim().length < 3) {
-  toast.error("Subject must be at least 3 characters long.");
-  return;
-}
+  if (!emailPattern.test(formData.email)) {
+    toast.error("Please enter a valid email address.");
+    return;
+  }
 
-if (formData.message.trim().length < 10) {
-  toast.error("Message must be at least 10 characters long.");
-  return;
-}
+  if (formData.subject.trim().length < 3) {
+    toast.error("Subject must be at least 3 characters long.");
+    return;
+  }
 
-const lowerEmail = formData.email.trim().toLowerCase();
+  if (formData.message.trim().length < 10) {
+    toast.error("Message must be at least 10 characters long.");
+    return;
+  }
 
-if (invalidDomains.some(domain => lowerEmail.endsWith(domain))) {
+  const lowerEmail = formData.email.trim().toLowerCase();
+
+ if (invalidDomains.some((domain) => lowerEmail.endsWith(domain))) {
   toast.error("Did you mean @gmail.com?");
   return;
 }
-setLoading(true);
+
+  // Turnstile verification MUST happen before EmailJS
+  if (!token) {
+    toast.error("Please verify that you are human.");
+    return;
+  }
+
+  setLoading(true);
 
   try {
-await emailjs.send(
-  emailConfig.serviceId,
-  emailConfig.templateId,
-  {
-    name: formData.name,
-    email: formData.email,
-    subject: formData.subject,
-    message: formData.message,
-  },
-  emailConfig.publicKey
-);
-    if (!token) {
-  toast.error("Please verify that you are human.");
-  return;
-}
+    await emailjs.send(
+      emailConfig.serviceId,
+      emailConfig.templateId,
+      {
+        name: formData.name,
+        email: formData.email,
+        subject: formData.subject,
+        message: formData.message,
+      },
+      emailConfig.publicKey
+    );
+
     setSuccess(true);
 
     setFormData({
@@ -104,13 +108,14 @@ await emailjs.send(
       subject: "",
       message: "",
     });
-setToken("");
 
-turnstileRef.current?.reset();
+    setToken("");
+
+    turnstileRef.current?.reset();
+
     setTimeout(() => {
       setSuccess(false);
     }, 3000);
-
   } catch (error) {
     console.error(error);
     toast.error("Failed to send message. Please try again.");

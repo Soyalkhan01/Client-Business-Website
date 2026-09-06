@@ -4,6 +4,9 @@ import toast from "react-hot-toast";
 import { Turnstile } from "@marsidev/react-turnstile";
 import { useRef } from "react";
 import { FaCheckCircle } from "react-icons/fa"; 
+import {
+  turnstileConfig,
+} from "../../data/contactData";
 
 
 function Newsletter() {
@@ -122,7 +125,7 @@ try {
 
 <Turnstile
   ref={turnstileRef}
-  siteKey="0x4AAAAAAEEg2zuwBAyJ-MeL"
+  siteKey={turnstileConfig.siteKey}
   onSuccess={(token) => {
     setToken(token);
   }}
